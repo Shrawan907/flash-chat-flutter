@@ -37,7 +37,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "co.shrawan98.flash_chat"
-        minSdkVersion 23 //  after adding dependencies like core,etc i changed 16(not support) to 21(supports) then to 23 (supports)
+        minSdkVersion 23 //
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -66,4 +66,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.2.1'   // i added it
 }
 
-apply plugin: 'com.google.gms.google-services'  // i added it
+apply plugin: 'com.google.gms.google-services'  //
