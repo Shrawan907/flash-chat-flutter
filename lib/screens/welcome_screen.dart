@@ -17,7 +17,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   void initState() {
     super.initState();
     controller = AnimationController(
-      duration: Duration(seconds: 1),
+      duration: Duration(seconds: 3),
       vsync: this,
       //upperBound: 100.0,    // this is not use when we use CurvedAnimation()
     );

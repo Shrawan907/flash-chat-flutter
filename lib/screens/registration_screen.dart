@@ -16,7 +16,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
   String email;
   String password;
+  String alert;
   bool showSpinner = false;
+  bool showAlert = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,27 +65,50 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               SizedBox(
                 height: 24.0,
               ),
-              RoundedButton(
+              !showAlert ? RoundedButton(
                 color: Colors.blueAccent,
                 title: 'Register',
                 onPressed: () async {
-                  try {
-                    setState(() {
-                      showSpinner = true;
-                    });
-                    final newUser = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-                    setState(() {
-                      showSpinner = false;
-                    });
-                    if(newUser != null){
-                      Navigator.pushNamed(context, ChatScreen.id);
+                  if(email != null && password != null) {
+                    try {
+                      setState(() {
+                        showSpinner = true;
+                      });
+                      final newUser = await _auth
+                          .createUserWithEmailAndPassword(
+                          email: email, password: password);
+                      setState(() {
+                        showSpinner = false;
+                      });
+                      if (newUser != null) {
+                        Navigator.pushNamed(context, ChatScreen.id);
+                      }
                     }
-
+                    catch (e) {
+                      print(e);
+                      setState(() {
+                        showSpinner = false;
+                        showAlert = true;
+                        alert = 'Bad Request!';
+                      });
+                    }
                   }
-                  catch (e) {
-                    print(e);
-                  }
+                  else
+                    setState(() {
+                      showAlert = true;
+                      alert = 'Fill the required fields!';
+                    });
                   },
+              )
+              : AlertDialog(
+                title: Text(alert),
+                actions: [FlatButton(
+                  onPressed: (){setState(() {
+                    showAlert = false;
+                  });},
+                  child: Text('Back'),
+                ),
+                ]
               ),
             ],
           ),

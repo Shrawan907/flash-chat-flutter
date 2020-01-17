@@ -14,8 +14,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
+  final passwordTextController = TextEditingController();
   String email;
+  String alert;
   String password;
+  bool showAlert = false;
   @override
   Widget build(BuildContext context) {
     return ProgressHUD(
@@ -52,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 8.0,
                 ),
                 TextField(
+                  controller: passwordTextController,
                   textAlign: TextAlign.center,
                   obscureText: true,  // password in dots
                   onChanged: (value) {
@@ -62,25 +66,50 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   height: 24.0,
                 ),
-                RoundedButton(
+                !showAlert ? RoundedButton(
                   color: Colors.lightBlueAccent,
                   title: 'Log In',
                   onPressed: () async {
-                    try {
+                    if(email != null && password !=null) {
                       final progress = ProgressHUD.of(context);
-                      progress.show();
-                      final user = await _auth.signInWithEmailAndPassword(
-                          email: email, password: password);
-                      progress.dismiss();
-                      if(user != null){
-                        Navigator.pushNamed(context, ChatScreen.id);
+                      try {
+                        progress.show();
+                        final user = await _auth.signInWithEmailAndPassword(
+                            email: email, password: password);
+                        progress.dismiss();
+                        passwordTextController.clear();
+                        password = null;
+                        if (user != null) {
+                          Navigator.pushNamed(context, ChatScreen.id);
+                        }
                       }
+                      catch (e) {
+                        print(e);
+                        setState(() {
+                          progress.dismiss();
+                          showAlert = true;
+                          alert = 'Invalid user';
+                        });
+                      }
+                    }
+                    else {
+                      setState(() {
+                        showAlert = true;
+                        alert = 'Fill the required fields';
+                      });
+                    }
 
-                    }
-                    catch (e) {
-                      print(e);
-                    }
                   },
+                )
+                : AlertDialog(
+                    title: Text(alert),
+                    actions: [FlatButton(
+                      onPressed: (){setState(() {
+                        showAlert = false;
+                      });},
+                      child: Text('Back'),
+                    ),
+                    ]
                 ),
               ],
             ),
